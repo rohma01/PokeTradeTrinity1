@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required  # <- added this
 from .forms import CustomUserCreationForm, CustomErrorList
 from .models import Pokemon
 import random
+from .models import Pokemon, UserProfile  # import UserProfile
 import requests
 
 def index(request):
@@ -26,6 +27,9 @@ def signup_view(request):
         if form.is_valid():
             user = form.save()
             auth_login(request, user)  # Log the user in after successful signup
+
+            # Create a UserProfile with starting coins
+            UserProfile.objects.create(user=user, coins=1000)
 
             # Fetch random Pokémon and assign it
             pokemon_name = get_random_pokemon()
