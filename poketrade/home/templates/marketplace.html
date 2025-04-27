@@ -1,6 +1,19 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div class="max-w-md mx-auto mt-8 mb-8 p-6 bg-yellow-100 rounded shadow text-center">
+  <h2 class="text-xl font-bold mb-2">Buy a Pokémon Pack</h2>
+  <form method="post" action="{% url 'buy_pack' %}" class="flex flex-col items-center gap-2">
+    {% csrf_token %}
+    <select name="tier" class="border p-2 rounded w-full max-w-xs">
+      <option value="basic">Basic Pack (100 coins)</option>
+      <option value="premium">Premium Pack (300 coins)</option>
+      <option value="legendary">Legendary Pack (1000 coins)</option>
+    </select>
+    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-bold w-full mt-2">Buy Pack</button>
+  </form>
+</div>
+
 <h1 class="text-3xl font-bold mb-6 text-center">Marketplace</h1>
 
 <!-- Search & Filter -->

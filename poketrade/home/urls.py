@@ -22,4 +22,5 @@ urlpatterns = [
     path('trade-offer/<int:offer_id>/<str:action>/', views.handle_trade_offer_view, name='handle_trade_offer'),
     path('my-trade-notifications/', views.my_trade_notifications_view, name='my_trade_notifications'),
     path('revoke-listing/<int:listing_id>/', views.revoke_listing_view, name='revoke_listing'),
+    path('buy-pack/', views.buy_pack_view, name='buy_pack'),
 ]

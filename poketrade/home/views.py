@@ -9,6 +9,7 @@ import requests
 import json
 from django import forms
 from django.contrib import messages
+from django.views.decorators.csrf import csrf_exempt
 
 def index(request):
     return render(request, 'index.html')
@@ -22,6 +23,21 @@ def get_random_pokemon():
         return data['name']
     else:
         return None
+
+def get_random_pokemon_name(tier):
+    # For demo: use static lists; can be replaced with PokéAPI rarity
+    common = ['pidgey', 'rattata', 'zigzagoon', 'bidoof', 'deerling', 'sentret']
+    rare = ['pikachu', 'eevee', 'dratini', 'scyther', 'growlithe']
+    legendary = ['mew', 'mewtwo', 'articuno', 'zapdos', 'moltres']
+    if tier == 'basic':
+        pool = common * 8 + rare * 2 + legendary
+    elif tier == 'premium':
+        pool = common * 4 + rare * 5 + legendary * 2
+    elif tier == 'legendary':
+        pool = common + rare * 3 + legendary * 6
+    else:
+        pool = common + rare + legendary
+    return random.choice(pool)
 
 def signup_view(request):
     if request.method == 'POST':
@@ -330,6 +346,22 @@ def revoke_listing_view(request, listing_id):
         messages.success(request, 'Your listing has been revoked and your Pokémon is no longer listed.')
         return redirect('marketplace')
     return render(request, 'home/error.html', {'message': 'Invalid request.'})
+
+@login_required
+def buy_pack_view(request):
+    if request.method == 'POST':
+        tier = request.POST.get('tier', 'basic')
+        user_profile = request.user.userprofile
+        tier_prices = {'basic': 100, 'premium': 300, 'legendary': 1000}
+        price = tier_prices.get(tier, 100)
+        if user_profile.coins < price:
+            return render(request, 'home/error.html', {'message': 'Not enough coins!'})
+        pokemon_name = get_random_pokemon_name(tier)
+        user_profile.coins -= price
+        user_profile.save()
+        new_pokemon = Pokemon.objects.create(name=pokemon_name, user=request.user)
+        return render(request, 'home/success.html', {'message': f'You got {pokemon_name.title()}!'})
+    return render(request, 'buy_pack.html')
 
 def base_context(request):
     notif_count = 0
