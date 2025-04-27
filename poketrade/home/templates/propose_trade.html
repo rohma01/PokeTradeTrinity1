@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-lg mx-auto mt-8 bg-white p-8 rounded shadow">
+  <h2 class="text-2xl font-bold mb-4 text-center">Propose a Trade</h2>
+  <div class="mb-4">
+    <p class="font-semibold">Offering for: <span class="text-blue-700">{{ listing.pokemon.name|title }}</span></p>
+    {% if listing.desired_pokemon_names %}
+      <p class="text-gray-700">Seller wants: <span class="font-bold">{{ listing.desired_pokemon_names }}</span></p>
+    {% endif %}
+  </div>
+  <form method="post" class="space-y-6">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    <div>
+      <label class="block font-semibold mb-1">{{ form.pokemon.label }}</label>
+      {{ form.pokemon.errors }}
+      {{ form.pokemon }}
+    </div>
+    <button type="submit" class="bg-yellow-500 text-white px-6 py-2 rounded w-full font-bold">Submit Trade Offer</button>
+  </form>
+</div>
+{% endblock %}

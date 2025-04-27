@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-lg mx-auto mt-8 bg-white p-8 rounded shadow">
+  <h2 class="text-2xl font-bold mb-4 text-center">List a Pokémon for Trade</h2>
+  <form method="post" class="space-y-6">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    <div>
+      <label class="block font-semibold mb-1">Pokémon to Offer</label>
+      {{ form.offered_pokemon.errors }}
+      {{ form.offered_pokemon|as_widget }}
+    </div>
+    <div>
+      <label class="block font-semibold mb-1">{{ form.desired_pokemon_names.label }}</label>
+      {{ form.desired_pokemon_names.errors }}
+      {{ form.desired_pokemon_names|as_widget }}
+      <small class="text-gray-500">{{ form.desired_pokemon_names.help_text }}</small>
+    </div>
+    <button type="submit" class="bg-blue-500 text-white px-6 py-2 rounded w-full font-bold">List for Trade</button>
+  </form>
+</div>
+{% endblock %}

@@ -14,6 +14,11 @@ urlpatterns = [
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='accounts/password_reset_complete.html'), name='password_reset_complete'),
     path('collection/', views.collection_view, name='collection'),
     path('marketplace/', marketplace_view, name='marketplace'),
+    path('marketplace/list/', views.list_marketplace_view, name='list_marketplace'),
     path('marketplace/list/', list_pokemon_view, name='list_pokemon'),
     path('marketplace/buy/<int:listing_id>/', buy_pokemon_view, name='buy_pokemon'),
+    path('marketplace/propose-trade/<int:listing_id>/', views.propose_trade_view, name='propose_trade'),
+    path('my-trade-offers/', views.my_trade_offers_view, name='my_trade_offers'),
+    path('trade-offer/<int:offer_id>/<str:action>/', views.handle_trade_offer_view, name='handle_trade_offer'),
+    path('my-trade-notifications/', views.my_trade_notifications_view, name='my_trade_notifications'),
 ]

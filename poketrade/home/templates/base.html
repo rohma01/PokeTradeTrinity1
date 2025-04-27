@@ -7,13 +7,37 @@
 </head>
 <body class="bg-gradient-to-r from-yellow-200 via-pink-300 to-pink-400 min-h-screen flex flex-col">
 
+    <!-- Messages -->
+    {% if messages %}
+      <div class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-md">
+        {% for message in messages %}
+          <div class="mb-2 px-4 py-3 rounded shadow text-center font-semibold
+            {% if message.tags == 'success' %}bg-green-100 text-green-700{% elif message.tags == 'info' %}bg-blue-100 text-blue-700{% elif message.tags == 'error' or message.tags == 'danger' %}bg-red-100 text-red-700{% else %}bg-gray-100 text-gray-700{% endif %}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
     <!-- Navbar -->
     <nav class="flex justify-between items-center p-4 bg-white shadow">
         <div class="text-red-500 font-bold text-xl">Poketrade</div>
         <div class="flex space-x-4 items-center">
             <a href="{% url 'index' %}">Home</a>
-            <a href="{% url 'collection' %}">My Collection</a>
-            <a href="{% url 'marketplace' %}">Marketplace</a>
+            <a href="{% url 'marketplace' %}" class="text-blue-500 hover:underline font-bold">Marketplace</a>
+            <a href="{% url 'collection' %}" class="ml-4 text-blue-500 hover:underline font-bold">My Collection</a>
+            <a href="{% url 'my_trade_offers' %}" class="ml-4 text-yellow-600 hover:underline font-bold relative">
+              My Trade Offers
+              {% if trade_offer_notif_count and trade_offer_notif_count > 0 %}
+                <span class="absolute -top-2 -right-3 bg-red-600 text-white text-xs font-bold rounded-full px-2 py-0.5 border-2 border-white shadow">{{ trade_offer_notif_count }}</span>
+              {% endif %}
+            </a>
+            <a href="{% url 'my_trade_notifications' %}" class="ml-4 text-green-600 hover:underline font-bold relative">
+              My Trade Notifications
+              {% if trade_result_notif_count and trade_result_notif_count > 0 %}
+                <span class="absolute -top-2 -right-3 bg-red-600 text-white text-xs font-bold rounded-full px-2 py-0.5 border-2 border-white shadow">{{ trade_result_notif_count }}</span>
+              {% endif %}
+            </a>
             <a href="{% url 'list_pokemon' %}" class="bg-red-600 text-white font-bold px-4 py-2 rounded shadow hover:bg-red-700 transition">List Pokémon</a>
             {% if user.is_authenticated %}
                 <span>{{ user.username }}</span>
