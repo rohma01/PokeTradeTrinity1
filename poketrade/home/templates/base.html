@@ -21,9 +21,9 @@
 
     <!-- Navbar -->
     <nav class="flex justify-between items-center p-4 bg-white shadow">
-        <div class="text-red-500 font-bold text-xl">Poketrade</div>
+        <a href="{% url 'index' %}" class="text-red-500 font-bold text-xl" style="text-decoration:none;">Poketrade</a>
         <div class="flex space-x-4 items-center">
-            <a href="{% url 'index' %}">Home</a>
+            {# <a href="{% url 'index' %}">Home</a> #}
             <a href="{% url 'marketplace' %}" class="text-blue-500 hover:underline font-bold">Marketplace</a>
             <a href="{% url 'collection' %}" class="ml-4 text-blue-500 hover:underline font-bold">My Collection</a>
             <a href="{% url 'my_trade_offers' %}" class="ml-4 text-yellow-600 hover:underline font-bold relative">

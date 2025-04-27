@@ -128,9 +128,9 @@
 <body>
 
   <header>
-    <h1>Poketrade</h1>
+    <a href="{% url 'index' %}" style="text-decoration:none;"><h1 style="margin:0;color:#e63946;">Poketrade</h1></a>
     <nav>
-      <a href="{% url 'index' %}">Home</a>
+      {# <a href="{% url 'index' %}">Home</a> #}
       <a href="{% url 'collection' %}">My Collection</a>
       <a href="{% url 'marketplace' %}">Marketplace</a>
       {% if user.is_authenticated %}
