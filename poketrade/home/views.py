@@ -6,6 +6,7 @@ from .forms import CustomUserCreationForm, CustomErrorList
 from .models import Pokemon, UserProfile, MarketplaceListing
 import random
 import requests
+import json
 
 def index(request):
     return render(request, 'index.html')
@@ -47,16 +48,19 @@ def collection_view(request):
             data = response.json()
             sprite_url = data['sprites']['front_default']
             types = [t['type']['name'] for t in data['types']]
+            stats = {s['stat']['name']: s['base_stat'] for s in data['stats']}
             pokemon_data.append({
                 'name': pokemon.name.title(),
                 'sprite': sprite_url,
-                'types': types
+                'types': types,
+                'stats': json.dumps(stats)
             })
         else:
             pokemon_data.append({
                 'name': pokemon.name.title(),
                 'sprite': None,
-                'types': []
+                'types': [],
+                'stats': '{}'
             })
     return render(request, 'collection.html', {'pokemon_data': pokemon_data})
 
@@ -77,6 +81,7 @@ def marketplace_view(request):
             data = response.json()
             sprite_url = data['sprites']['front_default']
             types = [t['type']['name'] for t in data['types']]
+            stats = {s['stat']['name']: s['base_stat'] for s in data['stats']}
 
             # Search & filter
             if search_query and search_query.lower() not in listing.pokemon.name.lower():
@@ -89,16 +94,11 @@ def marketplace_view(request):
                 'sprite': sprite_url,
                 'types': types,
                 'price': listing.price,
-                'listing_id': listing.id
+                'listing_id': listing.id,
+                'stats': json.dumps(stats)
             })
 
     return render(request, 'marketplace.html', {'pokemon_data': pokemon_data})
-
-
-
-
-
-
 
 
 
@@ -121,7 +121,6 @@ def list_pokemon_view(request):
         return redirect('marketplace')
 
     return render(request, 'list_pokemon.html', {'user_pokemon': user_pokemon})
-
 
 
 
