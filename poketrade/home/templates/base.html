@@ -14,7 +14,7 @@
             <a href="{% url 'index' %}">Home</a>
             <a href="{% url 'collection' %}">My Collection</a>
             <a href="{% url 'marketplace' %}">Marketplace</a>
-            <a href="{% url 'list_pokemon' %}">List Pokémon</a>
+            <a href="{% url 'list_pokemon' %}" class="bg-red-600 text-white font-bold px-4 py-2 rounded shadow hover:bg-red-700 transition">List Pokémon</a>
             {% if user.is_authenticated %}
                 <span>{{ user.username }}</span>
                 <span>🪙 {{ user.userprofile.coins }} Coins</span>
