@@ -26,7 +26,7 @@
         <h2 class="text-xl font-semibold mb-1">{{ pokemon.name }}</h2>
         <p class="mb-1 text-gray-600">Types: {{ pokemon.types|join:", " }}</p>
         {% if pokemon.price %}
-            <p class="mb-1 font-bold">Price: 🪙 {{ pokemon.price }}</p>
+            <p class="mb-1 font-bold">Price: {{ pokemon.price }}</p>
         {% endif %}
         {% if pokemon.desired_pokemon_names %}
             <div class="mb-1 flex items-center gap-2">
@@ -42,10 +42,17 @@
             </div>
         {% endif %}
         {% if pokemon.can_buy %}
-        <form method="post" action="{% url 'buy_pokemon' pokemon.listing_id %}">
-            {% csrf_token %}
-            <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded w-full">Buy</button>
-        </form>
+          {% if pokemon.is_owner %}
+            <form method="post" action="{% url 'revoke_listing' pokemon.listing_id %}">
+              {% csrf_token %}
+              <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded w-full font-bold">Revoke My Listing</button>
+            </form>
+          {% else %}
+            <form method="post" action="{% url 'buy_pokemon' pokemon.listing_id %}">
+              {% csrf_token %}
+              <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded w-full">Buy</button>
+            </form>
+          {% endif %}
         {% endif %}
         {% if pokemon.can_trade %}
         <form method="get" action="{% url 'propose_trade' pokemon.listing_id %}" class="w-full mt-2">

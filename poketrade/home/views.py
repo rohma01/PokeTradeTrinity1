@@ -299,6 +299,22 @@ def handle_trade_offer_view(request, offer_id, action):
     else:
         return render(request, 'home/error.html', {'message': 'Invalid action.'})
 
+@login_required
+def revoke_listing_view(request, listing_id):
+    user = request.user
+    try:
+        listing = MarketplaceListing.objects.get(id=listing_id, seller=user)
+    except MarketplaceListing.DoesNotExist:
+        return render(request, 'home/error.html', {'message': 'Listing not found or not owned by you.'})
+    if request.method == 'POST':
+        pokemon = listing.pokemon
+        pokemon.is_listed = False
+        pokemon.save()
+        listing.delete()
+        messages.success(request, 'Your listing has been revoked and your Pokémon is no longer listed.')
+        return redirect('marketplace')
+    return render(request, 'home/error.html', {'message': 'Invalid request.'})
+
 def base_context(request):
     notif_count = 0
     if request.user.is_authenticated:
