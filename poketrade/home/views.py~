@@ -69,28 +69,7 @@ def collection_view(request):
 @login_required
 def marketplace_view(request):
     user = request.user
-    search_query = request.GET.get('search', '').strip()
-    type_query = request.GET.get('type', '').strip().lower()
-
     listings = MarketplaceListing.objects.filter(pokemon__is_listed=True).select_related('pokemon', 'seller')
-
-    # Filter by search query (name)
-    if search_query:
-        listings = listings.filter(pokemon__name__icontains=search_query)
-
-    # Filter by type (if provided)
-    if type_query:
-        filtered_ids = []
-        for listing in listings:
-            url = f"https://pokeapi.co/api/v2/pokemon/{listing.pokemon.name.lower()}"
-            response = requests.get(url)
-            if response.status_code == 200:
-                data = response.json()
-                types = [t['type']['name'] for t in data['types']]
-                if type_query in types:
-                    filtered_ids.append(listing.id)
-        listings = listings.filter(id__in=filtered_ids)
-
     pokemon_data = []
     user_pokemon_names = set(p.name.lower() for p in user.pokemon_collection.all()) if user.is_authenticated else set()
     for listing in listings:
@@ -105,8 +84,9 @@ def marketplace_view(request):
             sprite_url = None
             types = []
             stats = {}
-        desired_list = listing.desired_pokemon_list() if hasattr(listing, 'desired_pokemon_list') else []
-        has_desired = bool(set(user_pokemon_names) & set(desired_list)) if desired_list else False
+        # Determine eligibility for trade
+        desired_list = listing.desired_pokemon_list()
+        has_desired = bool(user_pokemon_names.intersection(desired_list)) if desired_list else False
         pokemon_data.append({
             'name': listing.pokemon.name.title(),
             'sprite': sprite_url,
@@ -122,6 +102,8 @@ def marketplace_view(request):
             'is_owner': listing.seller == user,
         })
     return render(request, 'marketplace.html', {'pokemon_data': pokemon_data})
+
+
 
 @login_required
 def list_pokemon_view(request):
@@ -142,6 +124,8 @@ def list_pokemon_view(request):
         return redirect('marketplace')
 
     return render(request, 'list_pokemon.html', {'user_pokemon': user_pokemon})
+
+
 
 @login_required
 def buy_pokemon_view(request, listing_id):
