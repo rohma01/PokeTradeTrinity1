@@ -11,10 +11,12 @@
     {% if messages %}
       <div class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-md">
         {% for message in messages %}
-          <div class="mb-2 px-4 py-3 rounded shadow text-center font-semibold
-            {% if message.tags == 'success' %}bg-green-100 text-green-700{% elif message.tags == 'info' %}bg-blue-100 text-blue-700{% elif message.tags == 'error' or message.tags == 'danger' %}bg-red-100 text-red-700{% else %}bg-gray-100 text-gray-700{% endif %}">
+          {% if message.tags != 'info' %}
+          <div class="mb-2 px-4 py-3 rounded shadow text-center font-semibold relative
+            {% if message.tags == 'success' %}bg-green-100 text-green-700{% elif message.tags == 'error' or message.tags == 'danger' %}bg-red-100 text-red-700{% else %}bg-gray-100 text-gray-700{% endif %}">
             {{ message }}
           </div>
+          {% endif %}
         {% endfor %}
       </div>
     {% endif %}
@@ -23,10 +25,9 @@
     <nav class="flex justify-between items-center p-4 bg-white shadow">
         <a href="{% url 'index' %}" class="text-red-500 font-bold text-xl" style="text-decoration:none;">Poketrade</a>
         <div class="flex space-x-4 items-center">
-            {# <a href="{% url 'index' %}">Home</a> #}
-            <a href="{% url 'marketplace' %}" class="text-blue-500 hover:underline font-bold">Marketplace</a>
-            <a href="{% url 'collection' %}" class="ml-4 text-blue-500 hover:underline font-bold">My Collection</a>
-            <a href="{% url 'my_trade_offers' %}" class="ml-4 text-yellow-600 hover:underline font-bold relative">
+            <a href="{% url 'marketplace' %}" class="{% if current_url_name == 'marketplace' %}underline font-bold text-blue-700{% else %}text-blue-500 hover:underline font-bold{% endif %}">Marketplace</a>
+            <a href="{% url 'collection' %}" class="ml-4 {% if current_url_name == 'collection' %}underline font-bold text-blue-700{% else %}text-blue-500 hover:underline font-bold{% endif %}">My Collection</a>
+            <a href="{% url 'my_trade_offers' %}" class="ml-4 {% if current_url_name == 'my_trade_offers' %}underline font-bold text-yellow-700{% else %}text-yellow-600 hover:underline font-bold{% endif %} relative">
               My Trade Offers
               {% if trade_offer_notif_count and trade_offer_notif_count > 0 %}
                 <span class="absolute -top-2 -right-3 bg-red-600 text-white text-xs font-bold rounded-full px-2 py-0.5 border-2 border-white shadow">{{ trade_offer_notif_count }}</span>

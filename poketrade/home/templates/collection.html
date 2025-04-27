@@ -1,155 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>My Collection - Poketrade</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #ffcc70, #ff6699);
-      color: #333;
-    }
-
-    header {
-      background-color: #fff;
-      padding: 1rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    header h1 {
-      margin: 0;
-      font-size: 1.75rem;
-      color: #e63946;
-    }
-
-    nav {
-      display: flex;
-      align-items: center;
-    }
-
-    nav a, nav span {
-      margin-left: 1.5rem;
-      text-decoration: none;
-      color: #333;
-      font-weight: 600;
-    }
-
-    .collection {
-      text-align: center;
-      padding: 4rem 2rem;
-    }
-
-    .collection h2 {
-      font-size: 2.5rem;
-      margin-bottom: 2rem;
-    }
-
-    .pokemon-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr); /* 3 columns */
-      gap: 2rem;
-      padding: 1rem;
-      max-width: 1000px;
-      margin: 0 auto;
-    }
-
-    @media (max-width: 900px) {
-      .pokemon-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    @media (max-width: 600px) {
-      .pokemon-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .pokemon-card {
-      background-color: #fff;
-      padding: 1rem;
-      border-radius: 12px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      transition: transform 0.2s;
-      text-align: center;
-    }
-
-    .pokemon-card:hover {
-      transform: scale(1.05);
-    }
-
-    .pokemon-sprite {
-      width: 120px;
-      height: 120px;
-      object-fit: contain;
-    }
-
-    .pokemon-name {
-      font-size: 1.2rem;
-      font-weight: bold;
-      margin-top: 0.5rem;
-    }
-
-    .pokemon-types {
-      margin-top: 0.5rem;
-      font-size: 0.9rem;
-      color: #666;
-    }
-
-    footer {
-      text-align: center;
-      padding: 1rem;
-      background-color: #fff;
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-      font-size: 0.9rem;
-    }
-
-    #stats-modal {
-      animation: fadeIn 0.5s;
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-      }
-      to {
-        opacity: 1;
-      }
-    }
-  </style>
-</head>
-<body>
-
-  <header>
-    <a href="{% url 'index' %}" style="text-decoration:none;"><h1 style="margin:0;color:#e63946;">Poketrade</h1></a>
-    <nav>
-      {# <a href="{% url 'index' %}">Home</a> #}
-      <a href="{% url 'collection' %}">My Collection</a>
-      <a href="{% url 'marketplace' %}">Marketplace</a>
-      {% if user.is_authenticated %}
-        <a href="#">{{ user.username }}</a>
-        <span>🪙 {{ user.userprofile.coins }} Coins</span>
-        <form action="{% url 'logout' %}" method="post" style="display: inline;">
-          {% csrf_token %}
-          <button type="submit" style="background: none; border: none; color: #333; cursor: pointer; font-weight: 600;">Logout</button>
-        </form>
-      {% else %}
-        <a href="{% url 'login' %}">Login</a>
-        <a href="{% url 'signup' %}">Sign Up</a>
-      {% endif %}
-    </nav>
-  </header>
-
+{% extends "base.html" %}
+{% block content %}
   <div class="collection">
     <h2>My Pokémon Collection</h2>
-
     {% if pokemon_data %}
       <div class="pokemon-grid">
         {% for p in pokemon_data %}
@@ -163,11 +15,7 @@
                 {{ p.types|join:", " }}
               </div>
             {% endif %}
-            <button style="background-color:#3b82f6;color:white;padding:0.5rem 1rem;border-radius:0.375rem;margin-top:0.5rem;border:none;cursor:pointer;font-size:1rem;min-width:90px;"
-                    class="view-stats-btn"
-                    type="button"
-                    data-stats-id="stats-{{ forloop.counter }}"
-                    data-name="{{ p.name }}">View Stats</button>
+            <button style="background-color:#3b82f6;color:white;padding:0.5rem 1rem;border-radius:0.375rem;margin-top:0.5rem;border:none;cursor:pointer;font-size:1rem;min-width:90px;" class="view-stats-btn" type="button" data-stats-id="stats-{{ forloop.counter }}" data-name="{{ p.name }}">View Stats</button>
             <script type="application/json" id="stats-{{ forloop.counter }}">{{ p.stats|safe }}</script>
           </div>
         {% endfor %}
@@ -179,83 +27,74 @@
       <p>You have no Pokémon yet. Go catch some!</p>
     {% endif %}
   </div>
-
-  <div id="stats-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden z-50" style="display:none;">
-    <div class="bg-white rounded-lg shadow-lg p-8 w-96 max-w-full relative animate-fade-in" id="stats-modal-content">
-      <button id="close-stats-modal" type="button" class="absolute top-2 right-2 text-gray-500 hover:text-red-600 text-3xl font-bold" style="display:block;">&times;</button>
-      <div class="flex flex-col items-center">
-        <img id="stats-modal-sprite" src="" alt="" class="w-24 h-24 mb-2" style="display:none;" />
-        <h3 class="text-2xl font-bold mb-2 text-center" id="stats-modal-title"></h3>
-        <ul id="stats-modal-list" class="text-left space-y-2 w-full"></ul>
-      </div>
-    </div>
-  </div>
-
-  <footer>
-    &copy; 2025 Poketrade. All rights reserved.
-  </footer>
-
+  <style>
+    .collection {
+      text-align: center;
+      padding: 4rem 2rem;
+    }
+    .collection h2 {
+      font-size: 2.5rem;
+      margin-bottom: 2rem;
+    }
+    .pokemon-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      padding: 1rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .pokemon-card {
+      background: #fff;
+      border-radius: 1rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      padding: 2rem 1rem 1rem 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: transform 0.2s;
+    }
+    .pokemon-card:hover {
+      transform: translateY(-4px) scale(1.03);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.13);
+    }
+    .pokemon-sprite {
+      width: 96px;
+      height: 96px;
+      margin-bottom: 0.5rem;
+    }
+    .pokemon-name {
+      font-size: 1.25rem;
+      font-weight: bold;
+      margin-bottom: 0.25rem;
+    }
+    .pokemon-types {
+      font-size: 1rem;
+      color: #555;
+      margin-bottom: 0.5rem;
+    }
+    @media (max-width: 900px) {
+      .pokemon-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (max-width: 600px) {
+      .pokemon-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      const modal = document.getElementById('stats-modal');
-      const closeModal = document.getElementById('close-stats-modal');
-      const title = document.getElementById('stats-modal-title');
-      const list = document.getElementById('stats-modal-list');
-      const sprite = document.getElementById('stats-modal-sprite');
-      let currentStatsName = null;
-      function hideModal() {
-        modal.classList.add('hidden');
-        modal.style.display = 'none';
-        currentStatsName = null;
-      }
-      function showModal() {
-        modal.classList.remove('hidden');
-        modal.style.display = 'flex';
-      }
       document.querySelectorAll('.view-stats-btn').forEach(btn => {
         btn.addEventListener('click', function(e) {
           e.preventDefault();
           const name = this.getAttribute('data-name');
-          if (modal.style.display === 'flex' && currentStatsName === name) {
-            hideModal();
-            return;
-          }
           const statsId = this.getAttribute('data-stats-id');
-          const statsScript = document.getElementById(statsId);
-          let stats = {};
-          if (statsScript) {
-            try {
-              stats = JSON.parse(statsScript.textContent);
-            } catch (err) {
-              alert('Could not parse stats!');
-              return;
-            }
-          }
-          title.textContent = name + ' Stats';
-          // Optionally show Pokémon sprite if available
-          if (this.parentElement.querySelector('img')) {
-            sprite.src = this.parentElement.querySelector('img').src;
-            sprite.alt = name;
-            sprite.style.display = 'block';
-          } else {
-            sprite.style.display = 'none';
-          }
-          list.innerHTML = '';
-          for (const [stat, value] of Object.entries(stats)) {
-            const li = document.createElement('li');
-            li.innerHTML = `<span class='font-semibold'>${stat.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</span>: <span class='text-blue-700 font-bold'>${value}</span>`;
-            list.appendChild(li);
-          }
-          showModal();
-          currentStatsName = name;
+          const stats = JSON.parse(document.getElementById(statsId).textContent);
+          alert(`${name} Stats:\n` + Object.entries(stats).map(([k,v]) => `${k}: ${v}`).join("\n"));
         });
-      });
-      closeModal.addEventListener('click', hideModal);
-      modal.addEventListener('click', function(e) {
-        if (e.target === modal) hideModal();
       });
     });
   </script>
-
-</body>
-</html>
+{% endblock %}
