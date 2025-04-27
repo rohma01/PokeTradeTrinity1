@@ -153,9 +153,4 @@ def buy_pokemon_view(request, listing_id):
 
             return redirect('collection')
         else:
-            return render(request, 'error.html', {'message': 'Not enough coins to buy this listed Pokémon.'})
-
-
-
-
-
+            return render(request, 'home/error.html', {'message': 'Not enough coins to buy this listed Pokémon.'})
